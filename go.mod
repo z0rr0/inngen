@@ -1,3 +1,5 @@
 module github.com/z0rr0/inngen
 
-go 1.24.7
+go 1.25
+
+toolchain go1.25.3
