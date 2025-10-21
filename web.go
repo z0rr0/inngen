@@ -263,6 +263,12 @@ func handleGeneratePhysical(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Additional safety check before allocation
+	if count < 1 || count > 100 {
+		respondJSON(w, Response{Success: false, Message: "Invalid count parameter (must be between 1 and 100)"})
+		return
+	}
+
 	inns := make([]string, count)
 	for i := 0; i < count; i++ {
 		inns[i] = GeneratePhysicalINN()
@@ -282,6 +288,12 @@ func handleGenerateJuridical(w http.ResponseWriter, r *http.Request) {
 			respondJSON(w, Response{Success: false, Message: "Invalid count parameter (must be between 1 and 100)"})
 			return
 		}
+	}
+
+	// Additional safety check before allocation
+	if count < 1 || count > 100 {
+		respondJSON(w, Response{Success: false, Message: "Invalid count parameter (must be between 1 and 100)"})
+		return
 	}
 
 	inns := make([]string, count)
