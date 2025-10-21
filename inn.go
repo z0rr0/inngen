@@ -19,9 +19,6 @@ var (
 	coeff12_2 = []int{3, 7, 2, 4, 10, 3, 5, 9, 4, 6, 8}
 )
 
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
 
 // calculateChecksum calculates checksum for given digits using coefficients
 func calculateChecksum(digits []int, coeffs []int) int {
