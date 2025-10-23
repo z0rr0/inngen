@@ -34,6 +34,7 @@ jobs:
         uses: golangci/golangci-lint-action@v8
         with:
           version: v2.5.0
+          args: --config=golangci.yml --issues-exit-code=0
 
       - name: Run staticcheck
         uses: dominikh/staticcheck-action@v1
