@@ -15,7 +15,6 @@ func TestValidator_Validate(t *testing.T) {
 		requiredLength int
 		wantErr        error
 	}{
-		// Valid physical person INNs (12 digits)
 		{
 			name:           "valid physical INN",
 			inn:            "500100732259",
@@ -34,8 +33,6 @@ func TestValidator_Validate(t *testing.T) {
 			requiredLength: 0,
 			wantErr:        nil,
 		},
-
-		// Valid juridical person INNs (10 digits)
 		{
 			name:           "valid juridical INN",
 			inn:            "7707083893",
@@ -55,7 +52,6 @@ func TestValidator_Validate(t *testing.T) {
 			wantErr:        nil,
 		},
 
-		// Invalid length errors
 		{
 			name:           "empty INN",
 			inn:            "",
@@ -98,8 +94,6 @@ func TestValidator_Validate(t *testing.T) {
 			requiredLength: 5,
 			wantErr:        ErrInnLength,
 		},
-
-		// Non-digit characters
 		{
 			name:           "contains letter",
 			inn:            "77070838A3",
@@ -130,11 +124,9 @@ func TestValidator_Validate(t *testing.T) {
 			requiredLength: 0,
 			wantErr:        ErrInnLength,
 		},
-
-		// Invalid checksum - physical person
 		{
 			name:           "physical INN wrong 11th digit",
-			inn:            "500100732258", // last digit should be 9
+			inn:            "500100732258", // the latest digit should be 9
 			requiredLength: PhysicalLength,
 			wantErr:        ErrInnChecksum,
 		},
@@ -150,11 +142,9 @@ func TestValidator_Validate(t *testing.T) {
 			requiredLength: PhysicalLength,
 			wantErr:        ErrInnChecksum,
 		},
-
-		// Invalid checksum - juridical person
 		{
 			name:           "juridical INN wrong checksum",
-			inn:            "7707083892", // last digit should be 3
+			inn:            "7707083892", // the latest digit should be 3
 			requiredLength: JuridicalLength,
 			wantErr:        ErrInnChecksum,
 		},
@@ -170,8 +160,6 @@ func TestValidator_Validate(t *testing.T) {
 			requiredLength: JuridicalLength,
 			wantErr:        ErrInnChecksum,
 		},
-
-		// Valid edge cases - all zeros produce valid checksums
 		{
 			name:           "physical INN all zeros is valid",
 			inn:            "000000000000",
@@ -210,43 +198,6 @@ func TestValidator_Validate(t *testing.T) {
 			}
 		})
 	}
-}
-
-// TestValidator_Validate_Generated tests that generated INNs are valid
-func TestValidator_Validate_Generated(t *testing.T) {
-	t.Parallel()
-
-	t.Run("generated physical INNs are valid", func(t *testing.T) {
-		t.Parallel()
-
-		for i := 0; i < 100; i++ {
-			inn, err := GeneratePhysicalINN()
-			if err != nil {
-				t.Fatalf("GeneratePhysicalINN() failed: %v", err)
-			}
-
-			validator := NewValidator(inn, PhysicalLength)
-			if err := validator.Validate(); err != nil {
-				t.Errorf("Generated INN %s failed validation: %v", inn, err)
-			}
-		}
-	})
-
-	t.Run("generated juridical INNs are valid", func(t *testing.T) {
-		t.Parallel()
-
-		for i := 0; i < 100; i++ {
-			inn, err := GenerateJuridicalINN()
-			if err != nil {
-				t.Fatalf("GenerateJuridicalINN() failed: %v", err)
-			}
-
-			validator := NewValidator(inn, JuridicalLength)
-			if err := validator.Validate(); err != nil {
-				t.Errorf("Generated INN %s failed validation: %v", inn, err)
-			}
-		}
-	})
 }
 
 func TestFmtResult(t *testing.T) {

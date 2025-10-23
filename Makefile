@@ -24,9 +24,12 @@ lint:
 	@-gosec $(PWD)/...
 
 test: lint
-	# go test -v -race -cover -coverprofile=coverage.out -trace trace.out github.com/z0rr0/inngen
+	# go test -v -race -cover -coverprofile=coverage.out -trace trace.out github.com/z0rr0/inngen/inn
 	# go tool cover -html=coverage.out
 	go test -race -cover $(PWD)/...
+
+bench:
+	go test -bench=. -benchtime=1s $(PWD)/...
 
 build:
 	go build -o $(NAME) -ldflags "$(LDFLAGS)" .

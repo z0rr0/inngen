@@ -74,7 +74,7 @@ func main() {
 				_, _ = fmt.Fprintf(os.Stderr, "Error generating INN: %v\n", err)
 				os.Exit(1) //nolint:gocritic
 			}
-			fmt.Printf("%d. %s\n", i+1, value)
+			fmt.Printf("%-3d %s\n", i+1, value)
 		}
 	}
 
@@ -86,7 +86,7 @@ func main() {
 				_, _ = fmt.Fprintf(os.Stderr, "Error generating INN: %v\n", err)
 				os.Exit(1)
 			}
-			fmt.Printf("%d. %s\n", i+1, value)
+			fmt.Printf("%-3d %s\n", i+1, value)
 		}
 	}
 

@@ -92,6 +92,7 @@ func generateINN(length, capLen int, reader io.Reader) ([]int, error) {
 
 func digitsToString(digits []int) string {
 	var inn strings.Builder
+	inn.Grow(len(digits))
 
 	for _, d := range digits {
 		inn.WriteString(strconv.Itoa(d))
