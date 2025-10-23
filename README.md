@@ -1,10 +1,15 @@
-# inngen
+# INNGen
+
+![Go](https://github.com/z0rr0/inngen/workflows/Go/badge.svg)
+![Version](https://img.shields.io/github/tag/z0rr0/inngen.svg)
+![License](https://img.shields.io/github/license/z0rr0/inngen.svg)
 
 Taxpayer Identification Number (INN) generator and validator
 
 ## Description
 
 This is a mixed application that can be run as:
+
 1. A console tool to generate and validate Taxpayer Identification Numbers (INN)
 2. A web application for the same purposes
 
@@ -18,7 +23,8 @@ This is a mixed application that can be run as:
 ## Installation
 
 ```bash
-go build -o inngen
+make build
+# result file: inngen
 ```
 
 ## Usage
@@ -26,6 +32,7 @@ go build -o inngen
 ### Console Tool
 
 #### Validate INN
+
 ```bash
 ./inngen -c <INN>
 ```
@@ -37,11 +44,15 @@ Example:
 
 ./inngen -c 500100732259
 # Output: INN 500100732259 is valid (physical person)
+
+./inngen -c 500100732250
+# Output: INN 500100732250 invalid: invalid INN checksum: invalid physical inn, 12th digit is 0, expected 9
 ```
 
-#### Generate INNs for Physical Persons
+#### Generate INNs
+
 ```bash
-./inngen -f [count]
+./inngen -f [count] -j [count]
 ```
 
 If no count is specified, generates 5 INNs by default.
@@ -49,38 +60,30 @@ If no count is specified, generates 5 INNs by default.
 Example:
 ```bash
 ./inngen -f 0
-# Generates 5 INNs (default)
+# No INNs generated for physical persons
 
 ./inngen -f 3
-# Generates 3 INNs
-```
+# Generates 3 INNs for physical persons and 5 for juridical ones
 
-#### Generate INNs for Juridical Persons
-```bash
-./inngen -j [count]
-```
-
-If no count is specified, generates 5 INNs by default.
-
-Example:
-```bash
-./inngen -j 0
-# Generates 5 INNs (default)
-
-./inngen -j 2
-# Generates 2 INNs
+./inngen -f 2 -j 3
+# Generates 2 INNs for physical persons and 3 for juridical ones
 ```
 
 #### Run as Web Application
+
+In development yet!
+
 ```bash
 ./inngen -w
 ```
 
-This starts a web server on `127.0.0.1:2288` by default. Open your browser and navigate to `http://127.0.0.1:2288` to use the web interface.
+This starts a web server on `127.0.0.1:2288` by default.
+Open your browser and navigate to `http://127.0.0.1:2288` to use the web interface.
 
 ### Web Application
 
 The web interface provides:
+
 - **Validation form**: Enter an INN to check if it's valid
 - **Physical person generator**: Generate multiple valid 12-digit INNs
 - **Juridical person generator**: Generate multiple valid 10-digit INNs
@@ -95,15 +98,18 @@ The checksums are calculated using specific coefficients according to Russian IN
 ## Testing
 
 Run tests:
+
 ```bash
-go test -v
+make test
 ```
 
 Run benchmarks:
+
 ```bash
-go test -bench=.
+make bench
 ```
 
 ## License
 
-See LICENSE file for details.
+This source code is governed by a [BSD 3-Clause](https://opensource.org/licenses/BSD-3-Clause)
+license that can be found in the [LICENSE](https://github.com/z0rr0/inngen/blob/main/LICENSE) file.

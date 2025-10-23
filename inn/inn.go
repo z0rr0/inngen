@@ -99,14 +99,14 @@ func (v *Validator) validatePhysical(innNumbers []int) error {
 
 	if part1 != innNumbers[10] {
 		return fmt.Errorf(
-			"%w: invalid physical inn, 10th digit is %d, expected %d",
+			"%w: invalid physical inn, 11th digit is %d, expected %d",
 			ErrInnChecksum, innNumbers[10], part1,
 		)
 	}
 
 	if part2 != innNumbers[11] {
 		return fmt.Errorf(
-			"%w: invalid physical inn, 11th digit is %d, expected %d",
+			"%w: invalid physical inn, 12th digit is %d, expected %d",
 			ErrInnChecksum, innNumbers[11], part2,
 		)
 	}
@@ -158,7 +158,7 @@ func calculateControlValue(weights []int, innNumbers []int) (int, error) {
 // FmtResult returns a result string for a given INN.
 func FmtResult(inn string, err error) string {
 	if err != nil {
-		return fmt.Sprintf("INN '%s' invalid: %v", inn, err)
+		return fmt.Sprintf("INN %s invalid: %v", inn, err)
 	}
 
 	innType := "juridical"
