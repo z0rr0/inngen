@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>InnGen</title>
+</head>
+<body>
+<h1>Генератор ИНН</h1>
+<form method="post">
+	<div>
+		<input type="checkbox" name="physical" id="physical">
+		<label for="physical">Физ.лицо (по умолчанию юр.лица)</label>
+	</div>
+	<input type="submit" value="Сгенерировать">
+</form>
+{{if .Items}}
+<div>
+	<ul>
+		{{range .Items}}
+		<li>{{.}}</li>
+		{{end}}
+	</ul>
+</div>
+{{end}}
+</body>
+</html>
