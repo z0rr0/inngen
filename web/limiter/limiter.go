@@ -14,8 +14,8 @@ type TokenBucket struct {
 	interval       time.Duration
 	tokens         float64
 	maxTokens      float64
-	refillRate     float64 // per interval
-	sync.RWMutex
+	refillRate     float64
+	sync.RWMutex   //nolint:embeddedstructfieldcheck
 }
 
 // NewTokenBucket creates a new TokenBucket with the specified max tokens and refill rate.
@@ -53,12 +53,12 @@ func (tb *TokenBucket) Allow() bool {
 
 // RateLimiter is a rate limiter that limits requests based on a key.
 type RateLimiter[T comparable] struct {
-	buckets  map[T]*TokenBucket
-	excluded map[T]struct{}
-	interval time.Duration
-	rate     float64
-	burst    float64
-	sync.RWMutex
+	buckets      map[T]*TokenBucket
+	excluded     map[T]struct{}
+	interval     time.Duration
+	rate         float64
+	burst        float64
+	sync.RWMutex //nolint:embeddedstructfieldcheck
 }
 
 // NewRateLimiter creates a new RateLimiter with the specified rate and burst.

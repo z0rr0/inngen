@@ -78,11 +78,13 @@ func RequestID(r *http.Request) string {
 // It uses requestIDLen bytes of random data or current nanoseconds timestamp as a fallback.
 func generateRequestID() string {
 	bytes := make([]byte, requestIDLen)
+	_, err := io.ReadFull(rand.Reader, bytes)
 
-	if _, err := io.ReadFull(rand.Reader, bytes); err != nil {
+	if err != nil {
 		slog.Warn("failed to generate request ID", "error", err)
 		return strconv.FormatInt(time.Now().UnixNano(), 16)
 	}
+
 	return hex.EncodeToString(bytes)
 }
 

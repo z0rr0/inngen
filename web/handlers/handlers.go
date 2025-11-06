@@ -1,3 +1,4 @@
+// Package handlers contains the handlers for the web application.
 package handlers
 
 import "net/http"

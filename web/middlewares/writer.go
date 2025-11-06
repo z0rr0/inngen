@@ -12,6 +12,7 @@ import (
 // and tracks the number of bytes writtenBytes to the response.
 type responseWriter struct {
 	http.ResponseWriter
+
 	wroteHeader  atomic.Bool  // tracks if WriteHeader has been called
 	writtenBytes atomic.Int64 // tracks the number of bytes written
 	status       int          // stores the HTTP status code

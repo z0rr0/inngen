@@ -7,10 +7,9 @@ import (
 	"net"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
-
-	"github.com/stretchr/testify/assert"
 )
 
 // mockFlusher implements http.Flusher for testing
@@ -181,7 +180,9 @@ func TestResponseWriterStatus(t *testing.T) {
 				wrapped.WriteHeader(tc.writeStatus)
 			}
 
-			assert.Equal(t, tc.expectedStatus, wrapped.Status(), "Status() should return the correct status code")
+			if wrapped.Status() != tc.expectedStatus {
+				t.Errorf("Status() = %d, want %d", wrapped.Status(), tc.expectedStatus)
+			}
 		})
 	}
 }
@@ -218,10 +219,13 @@ func TestResponseWriterFlush(t *testing.T) {
 			wrapped.Flush()
 
 			if tc.supportFlush {
-				assert.True(t, mockFlush.flushed, "Flush() should call the underlying Flush method")
+				if !mockFlush.flushed {
+					t.Error("Flush() should call the underlying Flush method")
+				}
 			} else {
 				// No assertion needed, just ensuring no panic occurs
-				assert.NotPanics(t, func() { wrapped.Flush() }, "Flush() should not panic when ResponseWriter doesn't implement Flusher")
+				// Call wrapped.Flush() again to ensure no panic
+				wrapped.Flush()
 			}
 		})
 	}
@@ -260,17 +264,32 @@ func TestResponseWriterHijack(t *testing.T) {
 			conn, rw, err := wrapped.Hijack()
 
 			if tc.expectSuccess {
-				assert.NoError(t, err)
-				assert.NotNil(t, conn)
-				assert.NotNil(t, rw)
+				if err != nil {
+					t.Errorf("Hijack() error = %v, want nil", err)
+				}
+				if conn == nil {
+					t.Error("Hijack() conn = nil, want non-nil")
+				}
+				if rw == nil {
+					t.Error("Hijack() rw = nil, want non-nil")
+				}
 				if mh, ok := tc.hijacker.(*mockHijacker); ok {
-					assert.True(t, mh.hijacked, "Hijack() should call the underlying Hijack method")
+					if !mh.hijacked {
+						t.Error("Hijack() should call the underlying Hijack method")
+					}
 				}
 			} else {
-				assert.Error(t, err)
-				assert.Contains(t, err.Error(), tc.expectError)
-				assert.Nil(t, conn)
-				assert.Nil(t, rw)
+				if err == nil {
+					t.Errorf("Hijack() error = nil, want error containing %q", tc.expectError)
+				} else if !strings.Contains(err.Error(), tc.expectError) {
+					t.Errorf("Hijack() error = %q, want error containing %q", err.Error(), tc.expectError)
+				}
+				if conn != nil {
+					t.Errorf("Hijack() conn = %v, want nil", conn)
+				}
+				if rw != nil {
+					t.Errorf("Hijack() rw = %v, want nil", rw)
+				}
 			}
 		})
 	}
@@ -315,15 +334,26 @@ func TestResponseWriterPush(t *testing.T) {
 			err := wrapped.Push(tc.target, tc.opts)
 
 			if tc.expectSuccess {
-				assert.NoError(t, err)
+				if err != nil {
+					t.Errorf("Push() error = %v, want nil", err)
+				}
 				if mp, ok := tc.pusher.(*mockPusher); ok {
-					assert.True(t, mp.pushed, "Push() should call the underlying Push method")
-					assert.Equal(t, tc.target, mp.pushedPath, "Push() should pass the target path")
-					assert.Equal(t, tc.opts, mp.pushedOpts, "Push() should pass the options")
+					if !mp.pushed {
+						t.Error("Push() should call the underlying Push method")
+					}
+					if mp.pushedPath != tc.target {
+						t.Errorf("Push() pushedPath = %q, want %q", mp.pushedPath, tc.target)
+					}
+					if mp.pushedOpts != tc.opts {
+						t.Errorf("Push() pushedOpts = %v, want %v", mp.pushedOpts, tc.opts)
+					}
 				}
 			} else {
-				assert.Error(t, err)
-				assert.Contains(t, err.Error(), tc.expectError)
+				if err == nil {
+					t.Errorf("Push() error = nil, want error containing %q", tc.expectError)
+				} else if !strings.Contains(err.Error(), tc.expectError) {
+					t.Errorf("Push() error = %q, want error containing %q", err.Error(), tc.expectError)
+				}
 			}
 		})
 	}

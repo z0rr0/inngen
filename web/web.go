@@ -68,8 +68,9 @@ func NewAPIServer(ctxStop context.Context, address string) *Server {
 func (s *Server) Run() {
 	go func() {
 		const delay = 15 * time.Second
+		err := s.srv.ListenAndServe()
 
-		if err := s.srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		if err != nil && !errors.Is(err, http.ErrServerClosed) {
 			ticker := time.NewTicker(delay)
 			defer ticker.Stop()
 			// infinite loop to print error every 15 seconds until stopped
