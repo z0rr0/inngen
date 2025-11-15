@@ -8,6 +8,7 @@ import (
 	"os"
 	"runtime"
 	"runtime/debug"
+	"strings"
 
 	"github.com/z0rr0/inngen/inn"
 )
@@ -31,6 +32,7 @@ func main() {
 		genPhysical  = 5
 		genJuridical = 5
 		runWeb       = "127.0.0.1:2288"
+		separator    = ""
 	)
 	defer func() {
 		if r := recover(); r != nil {
@@ -45,6 +47,7 @@ func main() {
 	flag.StringVar(&runWeb, "w", runWeb, "run as web application")
 	flag.IntVar(&genPhysical, "f", genPhysical, "generate INNs for physical persons")
 	flag.IntVar(&genJuridical, "j", genJuridical, "generate INNs for juridical persons")
+	flag.StringVar(&separator, "s", separator, "separator for generated INNs")
 	version := flag.Bool("v", false, "show version")
 
 	flag.Parse()
@@ -67,27 +70,51 @@ func main() {
 	}
 
 	if genPhysical > 0 {
-		fmt.Printf("Generated %d INN(s) for physical persons:\n", genPhysical)
+		fmt.Printf("Generated %d INN(s) for physical persons: ", genPhysical)
+		var builder strings.Builder
+
 		for i := range genPhysical {
 			value, err := inn.GeneratePhysicalINN()
 			if err != nil {
 				_, _ = fmt.Fprintf(os.Stderr, "Error generating INN: %v\n", err)
 				os.Exit(1) //nolint:gocritic
 			}
-			fmt.Printf("%-3d %s\n", i+1, value)
+			if separator != "" {
+				builder.WriteString(value)
+				if i < genPhysical-1 {
+					builder.WriteString(separator)
+				}
+			} else {
+				builder.WriteString("\n")
+				builder.WriteString(fmt.Sprintf("%-3d %s", i+1, value))
+			}
 		}
+		builder.WriteString("\n")
+		fmt.Print(builder.String())
 	}
 
 	if genJuridical > 0 {
-		fmt.Printf("Generated %d INN(s) for juridical persons:\n", genJuridical)
+		fmt.Printf("Generated %d INN(s) for juridical persons: ", genJuridical)
+		var builder strings.Builder
+
 		for i := range genJuridical {
 			value, err := inn.GenerateJuridicalINN()
 			if err != nil {
 				_, _ = fmt.Fprintf(os.Stderr, "Error generating INN: %v\n", err)
 				os.Exit(1)
 			}
-			fmt.Printf("%-3d %s\n", i+1, value)
+			if separator != "" {
+				builder.WriteString(value)
+				if i < genJuridical-1 {
+					builder.WriteString(separator)
+				}
+			} else {
+				builder.WriteString("\n")
+				builder.WriteString(fmt.Sprintf("%-3d %s", i+1, value))
+			}
 		}
+		builder.WriteString("\n")
+		fmt.Print(builder.String())
 	}
 
 	//  if *runWeb {
