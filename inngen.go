@@ -8,7 +8,6 @@ import (
 	"os"
 	"runtime"
 	"runtime/debug"
-	"strings"
 
 	"github.com/z0rr0/inngen/inn"
 )
@@ -71,7 +70,6 @@ func main() {
 
 	if genPhysical > 0 {
 		fmt.Printf("Generated %d INN(s) for physical persons: ", genPhysical)
-		var builder strings.Builder
 
 		for i := range genPhysical {
 			value, err := inn.GeneratePhysicalINN()
@@ -80,22 +78,19 @@ func main() {
 				os.Exit(1) //nolint:gocritic
 			}
 			if separator != "" {
-				builder.WriteString(value)
+				fmt.Print(value)
 				if i < genPhysical-1 {
-					builder.WriteString(separator)
+					fmt.Print(separator)
 				}
 			} else {
-				builder.WriteString("\n")
-				builder.WriteString(fmt.Sprintf("%-3d %s", i+1, value))
+				fmt.Printf("\n%-3d %s", i+1, value)
 			}
 		}
-		builder.WriteString("\n")
-		fmt.Print(builder.String())
+		fmt.Println()
 	}
 
 	if genJuridical > 0 {
 		fmt.Printf("Generated %d INN(s) for juridical persons: ", genJuridical)
-		var builder strings.Builder
 
 		for i := range genJuridical {
 			value, err := inn.GenerateJuridicalINN()
@@ -104,17 +99,15 @@ func main() {
 				os.Exit(1)
 			}
 			if separator != "" {
-				builder.WriteString(value)
+				fmt.Print(value)
 				if i < genJuridical-1 {
-					builder.WriteString(separator)
+					fmt.Print(separator)
 				}
 			} else {
-				builder.WriteString("\n")
-				builder.WriteString(fmt.Sprintf("%-3d %s", i+1, value))
+				fmt.Printf("\n%-3d %s", i+1, value)
 			}
 		}
-		builder.WriteString("\n")
-		fmt.Print(builder.String())
+		fmt.Println()
 	}
 
 	//  if *runWeb {
